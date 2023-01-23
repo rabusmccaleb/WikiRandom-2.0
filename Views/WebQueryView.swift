@@ -1,16 +1,17 @@
 //
-//  WebView.swift
+//  WebQueryView.swift
 //  WikiRandom-2.0
 //
-//  Created by Clarke Kent on 1/7/23.
+//  Created by Clarke Kent on 1/14/23.
 //
 
 import Foundation
 import UIKit
 import WebKit
 
-class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
-    var webURL : String = ""
+class WebQueryView : UIViewController, WKNavigationDelegate, WKUIDelegate {
+    var webURL : queryDefaults = .google
+    var QueryParameters : String = ""
     
     lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
@@ -26,13 +27,13 @@ class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
         self.view.backgroundColor = .black
         setUpBackButton()
         setupWebView()
-
-        let url = URL(string: webURL)!
+        let queryURL : String = "\(webURL.rawValue)\(QueryParameters.addingPercentEncoding(withAllowedCharacters: .alphanumerics)!)"
+        print(queryURL)
+        let url = URL(string: queryURL)!
 
         webView.load(URLRequest(url: url))
 
         webView.allowsBackForwardNavigationGestures = true
-        
     }
     
     let backButton : UIButton = {
@@ -63,7 +64,7 @@ class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
         //
         webView.layer.cornerRadius = 8
         webView.clipsToBounds = true
-        //
+        
         NSLayoutConstraint.activate([
             webView.topAnchor
                 .constraint(equalTo: backButton.bottomAnchor),
@@ -75,5 +76,18 @@ class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
                 .constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor)
         ])
     }
+    
 }
+
+enum queryDefaults : String {
+    case google = "https://www.google.com/search?q="
+    case youtube = "https://www.youtube.com/results?search_query="
+//    case wiki = "https://en.m.wikipedia.org/"
+}
+
+// "https://www.youtube.com/results?search_query=\(query)"
+// "https://www.google.com/search?q=\(query)"
+
+
+// How do you pop the current view controller off of the navigation stack?
 

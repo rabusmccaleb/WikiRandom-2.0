@@ -4,10 +4,12 @@
 //
 //  Created by Clarke Kent on 1/7/23.
 //
+// brew install cocoapods
 
 import UIKit
 import FirebaseCore
 import Firebase
+import IQKeyboardManagerSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Initializing Firebase :
-//        FirebaseApp.configure()
+        FirebaseApp.configure()
+        // IQKeyboard
+        IQKeyboardManager.shared.enable = true
         // Override point for customization after application launch.
         window = UIWindow()
         let vc = ViewController()
@@ -43,4 +47,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
+
+
+
+
+
+
+
+
+
 

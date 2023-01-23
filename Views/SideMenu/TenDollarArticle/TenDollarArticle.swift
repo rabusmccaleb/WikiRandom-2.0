@@ -1,17 +1,49 @@
 //
-//  WebView.swift
+//  TenDollarArticle.swift
 //  WikiRandom-2.0
 //
-//  Created by Clarke Kent on 1/7/23.
+//  Created by Clarke Kent on 1/22/23.
 //
 
 import Foundation
 import UIKit
 import WebKit
 
-class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
-    var webURL : String = ""
+class TenDollarArticleView : UIViewController, WKUIDelegate {
+    var tenDollarData : tenDollarObject?
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        getTenDollarArticle()
+        setUpBackButton()
+        setupWebView()
+    }
+    
+    func getTenDollarArticle() {
+        if BackendSingleton.s.userId != nil {
+            let docRef = BackendSingleton.s.db.collection("10DollarArticleOfTheWeek").document("10DollarArticleOfTheWeek")
+            docRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    do {
+                        let jsonData = try JSONSerialization.data(withJSONObject: document.data(), options: [])
+                        let model = try JSONDecoder().decode(tenDollarObject.self, from: jsonData)
+                        self.tenDollarData = tenDollarObject(ArticleData: model.ArticleData, Language: model.Language, someOneHasWon: model.someOneHasWon, userIDOfWinner: model.userIDOfWinner, userNameOfWinner: model.userNameOfWinner)
+                        //
+                        var webURL : String = "http://\(model.Language).m.wikipedia.org/?curid=\(model.ArticleData)"
+                        let url = URL(string: webURL)!
+                        self.webView.load(URLRequest(url: url))
+                        self.webView.allowsBackForwardNavigationGestures = true
+                        
+                    } catch {
+                        print(error)
+                    }
+                } else {
+                    print("Document does not exist")
+                }
+            }
+        }
+    }
+        
     lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
         let webView = WKWebView(frame: .zero, configuration: webConfiguration)
@@ -19,21 +51,6 @@ class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
     }()
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.navigationController?.navigationBar.isHidden = true
-        self.view.backgroundColor = .black
-        setUpBackButton()
-        setupWebView()
-
-        let url = URL(string: webURL)!
-
-        webView.load(URLRequest(url: url))
-
-        webView.allowsBackForwardNavigationGestures = true
-        
-    }
     
     let backButton : UIButton = {
         let button = UIButton()
@@ -75,5 +92,13 @@ class WebView: UIViewController, WKNavigationDelegate, WKUIDelegate {
                 .constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor)
         ])
     }
+    
 }
 
+struct tenDollarObject : Decodable {
+    var ArticleData : String
+    var Language : String
+    var someOneHasWon : Bool
+    var userIDOfWinner : String
+    var userNameOfWinner : String
+}
