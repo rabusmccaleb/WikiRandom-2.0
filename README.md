@@ -41,7 +41,6 @@ I enject JS into the UIWebView in order to customly style the Wikipedia pages in
 <video src="" width="200"/>
 
 
-
 #### * Easily Get Simple Answers about content using ChatGTP AI Natural Language Model
 <video src="https://user-images.githubusercontent.com/69118018/214043966-77df35ae-005e-49da-93f3-816d13f0a4ef.gif" width="200"/>
 
